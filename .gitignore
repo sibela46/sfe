@@ -1,0 +1,5 @@
+/__pycache__
+/.ipynb_checkpoints
+/3d_video_frames
+/low_dim_frames
+*.ipynb
