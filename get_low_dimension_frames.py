@@ -11,21 +11,23 @@ detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(predictor_path)
 emotions = {"neutral": "01", "calm": "02", "happy": "03", "sad": "04", "angry": "05", "fearful": "06", "disgust": "07", "surprised": "08"}
 
-def get_random_emotion_shape(faces_folder_path, emotion=None):
-    # i = random.randint(1, 25)
-    i = 1
-    number = ' '
+def get_random_emotion_shape(faces_folder_path, emotion, actor):
+    if (not actor):
+        i = random.randint(1, 25)
+    else:
+        i = actor
 
     if (i < 10):
-        number = '0' + str(i)
+        actor_number = '0' + str(i)
     else:
-        number = str(i)
+        actor_number = str(i)
 
-    actor_path = '/Actor_' + number
+    actor_path = '/Actor_' + actor_number
 
     sub_dirs_size = len(glob.glob(os.path.join(faces_folder_path + actor_path, '*')))
     directory = glob.glob(os.path.join(faces_folder_path + actor_path, '*'))
     folder = ""
+
     if (emotion == None):
         folder_index = random.randint(0, sub_dirs_size-1)
         folder = directory[folder_index]
@@ -34,7 +36,7 @@ def get_random_emotion_shape(faces_folder_path, emotion=None):
             if (f.split('-')[2] == emotions[emotion] and f.split('-')[3] == "02" and f.split('-')[5] == "02"):
                 folder = f
     
-    print("Picked emotion: " + emotion for (emotion, value) in emotions.items() if value == folder.split('-')[2] )
+    print("Picked emotion: " + emotion for (emotion, value) in emotions.items() if value == folder.split('-')[2])
 
     frames = len(glob.glob(os.path.join(str(folder), '*.jpg')))
     vecs = np.empty((frames, 136), dtype=int)
