@@ -13,5 +13,6 @@ models/*
 !models/mrd_sad_fearful
 !models/face_mrd_rbf
 !models/face_mrd_linear
+/low_dim_frames
 /mrd_testing
 *.npy

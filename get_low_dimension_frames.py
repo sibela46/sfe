@@ -1,6 +1,7 @@
 import dlib
 import numpy as np
 import glob
+import cv2
 import os
 import sys
 import random
@@ -11,7 +12,7 @@ detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(predictor_path)
 emotions = {"neutral": "01", "calm": "02", "happy": "03", "sad": "04", "angry": "05", "fearful": "06", "disgust": "07", "surprised": "08"}
 
-def get_random_emotion_shape(faces_folder_path, emotion, actor):
+def get_folder_from_actor_emotion(path, emotion, actor):
     if (not actor):
         i = random.randint(1, 25)
     else:
@@ -24,8 +25,8 @@ def get_random_emotion_shape(faces_folder_path, emotion, actor):
 
     print("Chosen emotion: " + emotion)
     actor_path = '/Actor_' + actor_number
-    sub_dirs_size = len(glob.glob(os.path.join(faces_folder_path + actor_path, '*')))
-    directory = glob.glob(os.path.join(faces_folder_path + actor_path, '*'))
+    sub_dirs_size = len(glob.glob(os.path.join(path + actor_path, '*')))
+    directory = glob.glob(os.path.join(path + actor_path, '*'))
     folder = ""
 
     if (emotion == None):
@@ -36,6 +37,11 @@ def get_random_emotion_shape(faces_folder_path, emotion, actor):
             if (f.split('-')[2] == emotions[emotion] and (emotion == 'neutral' or f.split('-')[3] == "02") and f.split('-')[5] == "02"):
                 folder = f
     
+    return folder
+
+def get_random_emotion_shape(faces_folder_path, emotion, actor):
+    folder = get_folder_from_actor_emotion(faces_folder_path, emotion, actor)
+
     frames = 30
     vecs = np.empty((frames, 136), dtype=int)
 
