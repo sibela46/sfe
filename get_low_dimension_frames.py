@@ -22,7 +22,7 @@ def get_random_emotion_shape(faces_folder_path, emotion, actor):
     else:
         actor_number = str(i)
 
-    print(emotion)
+    print("Chosen emotion: " + emotion)
     actor_path = '/Actor_' + actor_number
     sub_dirs_size = len(glob.glob(os.path.join(faces_folder_path + actor_path, '*')))
     directory = glob.glob(os.path.join(faces_folder_path + actor_path, '*'))
@@ -79,43 +79,6 @@ def output_face_plots(vec, actor_path, folder, index):
 
     plt.gca().invert_xaxis()
     plt.gca().invert_yaxis()
-    plt.show()
-    # plt.scatter(vec[:, 0], vec[:, 1])
-    # plt.axis('off')
-    # plt.show()
-    # plt.savefig("./" + new_dir + "/" + str(index) + ".png")
-    # plt.clf()
-
-
-# get_random_emotion_shape("./3d_video_frames", "neutral", 1)
-#     get_random_emotion_shape("./3d_video_frames", "calm", i)
-#     get_random_emotion_shape("./3d_video_frames", "happy", i)
-#     get_random_emotion_shape("./3d_video_frames", "sad", i)
-#     get_random_emotion_shape("./3d_video_frames", "angry", i)
-#     get_random_emotion_shape("./3d_video_frames", "fearful", i)
-#     get_random_emotion_shape("./3d_video_frames", "disgust", i)
-#     get_random_emotion_shape("./3d_video_frames", "surprised", i)
-
-# f = "./3d_video_frames/Actor_01/02-01-03-02-02-02-01/image36.jpg"
-# img = dlib.load_rgb_image(f)
-
-# dets = detector(img)
-
-# for k, d in enumerate(dets):
-#     shape = predictor(img, d)
-
-# vec_out = np.empty((68, 2), dtype=int)
-# for b in range(68):
-#     vec_out[b, 0] = shape.part(b).x
-#     vec_out[b, 1] = shape.part(b).y
-
-# fig = plt.figure()
-# ax = fig.add_subplot(111)
-# x = vec_out[:, 0]
-# y = vec_out[:, 1]
-# ax.scatter(x, y, c='black')
-# plt.axis('off')
-# plt.gca().invert_xaxis()
-# plt.gca().invert_yaxis()
-# plt.savefig("actor01_happy_36", bbox_inches='tight')
-# plt.show()
+    plt.axis('off')
+    plt.savefig("./" + new_dir + "/" + str(index) + ".png")
+    plt.clf()

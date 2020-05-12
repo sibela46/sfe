@@ -14,12 +14,12 @@ class SFE_MRD:
         
         if (not optimize):
             self.model = pickle.load(open(self.model_path, "rb"))
-            # self.model.plot_scales()
-            # plt.show()
+            self.model.plot_scales()
+            plt.show()
             self.getDiffInY(1)
-            # self.plot_latent()
-            # self.visualize(2)
-            # self.outputAltered(0)
+            self.plot_latent()
+            self.visualize(2)
+            self.outputAltered(0)
         else:
             self.optimize(views, save_model=save_model)
             # self.getDiffInY()
@@ -93,9 +93,6 @@ class SFE_MRD:
         x = frameCoords[:, 0]*(-1)
         y = frameCoords[:, 1]*(-1)
         ax.scatter(x, y, marker='o', color='black')
-        for i in range(frameCoords.shape[0]):
-            ax.annotate(str(i), (x[i], y[i]), xytext=(10,10), textcoords='offset points')
-            plt.scatter(x, y, marker='x', color='red')
         def update(val):
             to_add = np.zeros(self.model.X.mean.shape)
             vip_dim = self.get_most_important_dim(sview.val, sframe.val)
@@ -107,9 +104,6 @@ class SFE_MRD:
             x = frameCoords[:, 0]*(-1)
             y = frameCoords[:, 1]*(-1)
             ax.scatter(x, y, marker='o', color='black')
-            # for i in range(frameCoords.shape[0]):
-            #     ax.annotate(str(i), (x[i], y[i]), xytext=(10,10), textcoords='offset points')
-            #     plt.scatter(x, y, marker='x', color='red')
             fig.canvas.draw_idle()
 
         smean.on_changed(update)
