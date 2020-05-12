@@ -12,23 +12,23 @@ class SFE_MRD:
         self.views = views
         self.model_path = model_path
         
-        if (not optimize):
+        if (not optimize): # In this case a path to a model was selected, so load the model
             self.model = pickle.load(open(self.model_path, "rb"))
             self.model.plot_scales()
             plt.show()
-            self.getDiffInY(1)
+            self.getDiffInY(0)
             self.plot_latent()
-            self.visualize(2)
             self.outputAltered(0)
-        else:
+            self.visualize(2)
+        else: # In this case begin training, and plot the results after that
             self.optimize(views, save_model=save_model)
-            # self.getDiffInY()
-            self.plot_latent()
             self.model.plot_scales()
             plt.show()
+            self.getDiffInY(0)
+            self.plot_latent()
             self.visualize(len(views))
 
-
+    # Defines the MRD model with the chosen parameters and begins optimising it
     def optimize(self, views, num_inducing=30, latent_dims=7, messages=True, max_iters=8e3, save_model=False):
         k = kern.RBF(latent_dims, ARD=True) + kern.White(latent_dims, variance=1e-4) + GPy.kern.Bias(latent_dims)
         m = MRD(views, input_dim=latent_dims, num_inducing=num_inducing, kernel=k, normalizer=False)
@@ -40,44 +40,56 @@ class SFE_MRD:
         
         self.model = m
 
+    # Generates two predictions from two latent spaces, finds the differences in coordinates of the
+    # generated outputs and saves them in a .txt file which is then used by the C++ plug-in
     def getDiffInY(self, view):
-        to_add_neutral = np.zeros(self.model.X.mean.shape)
-        to_add_emotion = np.zeros(self.model.X.mean.shape)
+        # Get the most important dimension for the particular view
         vip_dim = self.get_most_important_dim(view, 15)
-        to_add_neutral[:, vip_dim] -= 2
+        
+        # Define a matrix with all zeros except for the vip dimension
+        to_add_neutral = np.zeros(self.model.X.mean.shape)
+        # Fill the vip dimension with some value to add to the latent space mean
+        to_add_neutral[:, vip_dim] += 0
+
+        # Generate a prediction that would serve as a base
         neutralX = self.model.X.mean + to_add_neutral
         oldY = self.model.predict(neutralX, Yindex=view)
+
+        # Define another matrix with all zeros except for the vip dimension
+        to_add_emotion = np.zeros(self.model.X.mean.shape)
+        # Add onto that dimension in order to alter the latent space mean
         to_add_emotion[:, vip_dim] += 3
+
+        # Generate a modified expression with the new mean
         happyX = self.model.X.mean + to_add_emotion
         newY = self.model.predict(happyX, Yindex=view)
+
+        # Reshape the resulting predictions in order to output their coordinates
         oldFrameCoords = oldY[0][15].reshape(68,2)
         newFrameCoords = newY[0][15].reshape(68,2)
+
+        # Find the difference in coordinates
         diff = (oldFrameCoords - newFrameCoords)
+
+        # Save it in a text file
         with open("output.txt", "w") as txt_file:
             for i in diff:
-                txt_file.write(str(i[0]) + ", " + str(i[1]) + ", ") # works with any number of elements in a line
+                txt_file.write(str(i[0]) + ", " + str(i[1]) + ", ")
 
+    # Plots the latent space manifold
     def plot_latent(self):
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        sharedDims, privateDims = self.model.factorize_space()
-        highest_dim_0 = self.get_most_important_dim(0, 15)
-        highest_dim_1 = self.get_most_important_dim(1, 15)
-        # x = np.delete(self.model.X.mean,(1), axis=1)
         ax.plot(self.model.X.mean)
-        # print(privateDims)
-        # for privateDim in (privateDims):
-        #     i = privateDim[0]
-        #     j = privateDim[1]
-        #     ax.scatter(self.model.X.mean[:, i], self.model.X.mean[:, j])
         plt.show()
 
+    # Displays the interactive window used to alter the mean, view and frame values and observe the new outputs
     def visualize(self, views):
         sharedDims, privateDims = self.model.factorize_space()
         newX = self.model.X.mean
         newY = self.model.predict(newX, Yindex=0)
         frames = newY[0].shape[0]
-        i = 15
+
         fig, ax = plt.subplots()
         plt.subplots_adjust(left=0.25, bottom=0.25)
         axcolor = 'lightgoldenrodyellow'
@@ -93,12 +105,14 @@ class SFE_MRD:
         x = frameCoords[:, 0]*(-1)
         y = frameCoords[:, 1]*(-1)
         ax.scatter(x, y, marker='o', color='black')
+
         def update(val):
             to_add = np.zeros(self.model.X.mean.shape)
             vip_dim = self.get_most_important_dim(sview.val, sframe.val)
             to_add[:, vip_dim] += smean.val
             newX = self.model.X.mean + to_add
             newY = self.model.predict(newX, Yindex=int(sview.val))
+
             frameCoords = newY[0][int(sframe.val-1)].reshape(68,2)
             ax.clear()
             x = frameCoords[:, 0]*(-1)
@@ -121,9 +135,11 @@ class SFE_MRD:
         button.on_clicked(reset)
         plt.show()
 
+    # Finds the dimension with the highest ARD weight, given a particular view
     def get_most_important_dim(self, view, frame):
         sharedDims, privateDims = self.model.factorize_space()
         viewDims = privateDims[int(view)]
+        # The ARD weight is expressed through the variance of the latent space
         frameVariances = self.model.X.variance[int(frame-1), :]
         maxDim = 0
         maxDimIndex = -1
@@ -134,7 +150,10 @@ class SFE_MRD:
 
         return maxDimIndex
 
+    # Used to output data for testing the CNN
     def outputAltered(self, view):
+        # What comes after the "/" needs to be the emotion identifier, so that it can
+        # be correctly read by the CNN
         new_dir = "mrd_testing/05"
 
         if (not os.path.isdir(new_dir)):
@@ -144,14 +163,17 @@ class SFE_MRD:
             to_add = np.zeros(self.model.X.mean.shape)
             vip_dim = self.get_most_important_dim(view, i)
             to_add[:, vip_dim] -= 5
+
             newX = self.model.X.mean + to_add
             newY = self.model.predict(newX, Yindex=view)
             frameCoords = newY[0][i-1].reshape(68,2)
+
             fig = plt.figure()
             plt.axis('off')
             ax = fig.add_subplot(111)
             x = frameCoords[:, 0]*(-1)
             y = frameCoords[:, 1]*(-1)
             ax.scatter(x, y, marker='o', color='black')
+            
             plt.savefig("./" + new_dir + "/" + str(i) + ".png")
             plt.clf()

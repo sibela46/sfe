@@ -7,6 +7,11 @@
 /checkpoints
 *.pyc
 *.txt
-/models
+!models/
+models/*
+!models/mrd_happy_angry_all_rbf_concat_ind30_len10
+!models/mrd_sad_fearful
+!models/face_mrd_rbf
+!models/face_mrd_linear
 /mrd_testing
 *.npy

@@ -41,6 +41,6 @@ def main():
             angryViews = np.concatenate((angryViews, newAngry), axis=0)
 
     mrd = SFE_MRD(views=[happyViews, angryViews], optimize=args.optimize, model_path=args.model_path, save_model=args.save)
+
 if __name__ == "__main__":
     main()
-
