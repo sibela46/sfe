@@ -3,3 +3,11 @@
 /3d_video_frames
 /low_dim_frames
 *.ipynb
+/test1
+/train
+/checkpoints
+*.pyc
+*.txt
+/models
+/mrd_testing
+*.npy
