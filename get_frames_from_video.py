@@ -26,8 +26,11 @@ for i in range(1, 25):
     actor_path = '/Actor_' + number
 
     for f in glob.glob(os.path.join(videos_folder_path + actor_path, "02-01*.mp4")):
-        new_dir = "." + actor_path + "/" + f.split('/')[3].split('.')[0]
-        os.makedirs(new_dir)
+        new_dir = "./3d_video_frames" + actor_path + "/" + f.split('/')[3].split('.')[0]
+
+        if (not os.path.isdir(new_dir)):
+            os.makedirs(new_dir)
+
         vidcap = cv2.VideoCapture(f)
         sec = 0
         frameRate = 0.1 #It will capture image in each 0.1 second

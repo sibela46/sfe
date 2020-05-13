@@ -8,16 +8,19 @@ from matplotlib import pyplot as plt
 from matplotlib.widgets import Slider, Button, RadioButtons
 
 class SFE_MRD:
-    def __init__(self, views, optimize=True, model_path=None, save_model=None):
+    def __init__(self, views, optimize=True, model_path=None, kernel=None, lengthscale=None, num_inducing=20, save_model=None):
         self.views = views
         self.model_path = model_path
-        
+        self.kernel = kernel.lower()
+        self.lengthscale = lengthscale
+        self.num_inducing = int(num_inducing)
+
         if (not optimize): # In this case a path to a model was selected, so load the model
             self.model = pickle.load(open(self.model_path, "rb"))
-            # self.model.plot_scales()
-            # plt.show()
-            # self.getDiffInY(0)
-            # self.plot_latent()
+            self.model.plot_scales()
+            plt.show()
+            self.getDiffInY(0)
+            self.plot_latent()
             # self.outputAltered(0)
             self.visualize(2)
         else: # In this case begin training, and plot the results after that
@@ -26,12 +29,24 @@ class SFE_MRD:
             plt.show()
             self.getDiffInY(0)
             self.plot_latent()
-            self.visualize(len(views))
+            self.visualize(2)
 
     # Defines the MRD model with the chosen parameters and begins optimising it
-    def optimize(self, views, num_inducing=30, latent_dims=7, messages=True, max_iters=8e3, save_model=False):
-        k = kern.RBF(latent_dims, ARD=True) + kern.White(latent_dims, variance=1e-4) + GPy.kern.Bias(latent_dims)
-        m = MRD(views, input_dim=latent_dims, num_inducing=num_inducing, kernel=k, normalizer=False)
+    def optimize(self, views, latent_dims=7, messages=True, max_iters=8e3, save_model=False):
+        if (self.kernel):
+            if (self.kernel == 'rbf'):
+                print("Chosen kernel: RBF")
+                print("Chosen lengthscale: " + self.lengthscale)
+                k = kern.RBF(latent_dims, ARD=True, lengthscale=self.lengthscale) + kern.White(latent_dims, variance=1e-4) + GPy.kern.Bias(latent_dims)
+            elif (self.kernel == 'linear'):
+                print("Chosen kernel: Linear")
+                k = kern.Linear(latent_dims, ARD=True) + kern.White(latent_dims, variance=1e-4) + GPy.kern.Bias(latent_dims)
+        else:
+            print("No kernel or chosen - using RBF with lengthscale 10...")
+            k = kern.RBF(latent_dims, ARD=True, lengthscale=10) + kern.White(latent_dims, variance=1e-4) + GPy.kern.Bias(latent_dims)
+    
+        print("Number of inducing inputs: " + str(self.num_inducing))
+        m = MRD(views, input_dim=latent_dims, num_inducing=self.num_inducing, kernel=k, normalizer=False)
         print("Optimizing Model...")
         m.optimize(messages=True, max_iters=8e3)
         

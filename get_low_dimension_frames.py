@@ -23,7 +23,6 @@ def get_folder_from_actor_emotion(path, emotion, actor):
     else:
         actor_number = str(i)
 
-    print("Chosen emotion: " + emotion)
     actor_path = '/Actor_' + actor_number
     sub_dirs_size = len(glob.glob(os.path.join(path + actor_path, '*')))
     directory = glob.glob(os.path.join(path + actor_path, '*'))
