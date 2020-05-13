@@ -48,7 +48,7 @@ python get_grames_from_video.py [path-to-data]
 which will output the data into frames and save it in a folder "3d_video_frames".
 
 ### Optimise the model
-You can now execute the *sfe.py* script with the arguments "-o" and "-d [path-to-data]" to optimise the model with the parameters of your choice. For example if you would like to train the model with an RBF kernel, a lengtscale of 1-, 30 inducing inputs, using videos of 8 actors and the emotions calm and sad, run:
+You can now execute the *sfe.py* script with the arguments "-o" and "-d [path-to-data]" to optimise the model with the parameters of your choice. For example if you would like to train the model with an RBF kernel, a lengtscale of 10, 20 inducing inputs, using videos of 8 actors and the emotions calm and sad, run:
 
 ```bash
 python get_grames_from_video.py -o -d "./3d_video_frames" --emotions happy,sad --actors 8 --kernel rbf --lengthscale 10 --inducing_inputs 20
