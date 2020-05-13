@@ -7,7 +7,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("-o", "--optimize", help="optimize model", action="store_true")
 parser.add_argument("-m", "--model-path", help="select a path to an optimized model")
-parser.add_argument("-d", "--data-path", help="select path to the video frames data", required=True)
+parser.add_argument("-d", "--data-path", help="select path to the video frames data")
 parser.add_argument("--actors", help="two numbers from 1-24 for which actor's videos to use")
 parser.add_argument("--emotions", help="provide a list of emotions (strings separated by commas with no whitespace)")
 parser.add_argument("--save", help="provide the name for the model to save it in the /models folder")

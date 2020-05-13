@@ -14,11 +14,11 @@ class SFE_MRD:
         
         if (not optimize): # In this case a path to a model was selected, so load the model
             self.model = pickle.load(open(self.model_path, "rb"))
-            self.model.plot_scales()
-            plt.show()
-            self.getDiffInY(0)
-            self.plot_latent()
-            self.outputAltered(0)
+            # self.model.plot_scales()
+            # plt.show()
+            # self.getDiffInY(0)
+            # self.plot_latent()
+            # self.outputAltered(0)
             self.visualize(2)
         else: # In this case begin training, and plot the results after that
             self.optimize(views, save_model=save_model)

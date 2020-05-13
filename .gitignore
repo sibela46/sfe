@@ -10,7 +10,7 @@
 !models/
 models/*
 !models/mrd_happy_angry_all_rbf_concat_ind30_len10
-!models/mrd_man_woman_8_actors_linear
+!models/mrd_man_woman_all
 !models/mrd_happy_angry_linear
 /low_dim_frames
 /mrd_testing
