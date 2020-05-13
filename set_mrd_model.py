@@ -11,7 +11,10 @@ class SFE_MRD:
     def __init__(self, views, optimize=True, model_path=None, kernel=None, lengthscale=None, num_inducing=20, save_model=None):
         self.views = views
         self.model_path = model_path
-        self.kernel = kernel.lower()
+        if (kernel):
+            self.kernel = kernel.lower()
+        else:
+            self.kernel = kernel
         self.lengthscale = lengthscale
         self.num_inducing = int(num_inducing)
 
@@ -21,13 +24,13 @@ class SFE_MRD:
             plt.show()
             self.getDiffInY(0)
             self.plot_latent()
-            # self.outputAltered(0)
+            self.outputAltered(0)
             self.visualize(2)
         else: # In this case begin training, and plot the results after that
             self.optimize(views, save_model=save_model)
             self.model.plot_scales()
             plt.show()
-            self.getDiffInY(0)
+            self.getDiffInY(1)
             self.plot_latent()
             self.visualize(2)
 
@@ -73,7 +76,7 @@ class SFE_MRD:
         # Define another matrix with all zeros except for the vip dimension
         to_add_emotion = np.zeros(self.model.X.mean.shape)
         # Add onto that dimension in order to alter the latent space mean
-        to_add_emotion[:, vip_dim] += 3
+        to_add_emotion[:, vip_dim] += 1.5
 
         # Generate a modified expression with the new mean
         happyX = self.model.X.mean + to_add_emotion

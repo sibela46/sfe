@@ -76,6 +76,8 @@ def main():
                 angryViews = np.concatenate((angryViews, newAngry), axis=0)
 
             mrd = SFE_MRD(views=[happyViews, angryViews], optimize=args.optimize, model_path=args.model_path, kernel=args.kernel, lengthscale=args.lengthscale, num_inducing=args.inducing_inputs, save_model=args.save)
+    else: # Load an existing model
+        mrd = SFE_MRD(views=[], optimize=args.optimize, model_path=args.model_path)
 
 if __name__ == "__main__":
     main()

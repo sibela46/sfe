@@ -53,4 +53,3 @@ You can now execute the *sfe.py* script with the arguments "-o" and "-d [path-to
 ```bash
 python get_grames_from_video.py -o -d "./3d_video_frames" --emotions happy,sad --actors 8 --kernel rbf --lengthscale 10 --inducing_inputs 20
 ```
-
