@@ -79,10 +79,10 @@ class CNN:
         return testing_data
 
 cnn = CNN()
-# train = cnn.create_train_data()
-# test = cnn.process_test_data()
-train = np.load("train_data.npy")
-test = np.load("test_data.npy")
+train = cnn.create_train_data()
+test = cnn.process_test_data()
+# train = np.load("train_data.npy")
+# test = np.load("test_data.npy")
 train_data = train[4:] # leave 22 actors for training
 test_data = train[:4] # leave 1 actor for validation
 shuffle(train_data)
@@ -103,9 +103,9 @@ cnn.model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
-cnn.model.load_weights('./checkpoints/batchsize_4_checkpoints/emotion-prediction-checkpoint')
-# history = cnn.model.fit(train_images, np.array(train_labels), batch_size=4, epochs=10, 
-#                     validation_data=(np.array(val_test_images), np.array(val_test_labels)))
+# cnn.model.load_weights('./checkpoints/batchsize_4_checkpoints/emotion-prediction-checkpoint')
+history = cnn.model.fit(train_images, np.array(train_labels), batch_size=4, epochs=10, 
+                    validation_data=(np.array(val_test_images), np.array(val_test_labels)))
 
 test_images = np.array([i[0]/255 for i in test]).reshape(-1, cnn.imageSize, cnn.imageSize, 30, 1)
 test_label_arrays = [i[1] for i in test]
@@ -129,4 +129,4 @@ for i in range(4):
     plt.xlabel(class_names[predictions[i]], fontsize=20)
     plt.show()
 
-# cnn.model.save_weights('./checkpoints/batchsize_4_checkpoints/emotion-prediction-checkpoint')
+cnn.model.save_weights('./checkpoints/batchsize_4_checkpoints/emotion-prediction-checkpoint')

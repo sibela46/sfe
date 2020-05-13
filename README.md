@@ -53,3 +53,21 @@ You can now execute the *sfe.py* script with the arguments "-o" and "-d [path-to
 ```bash
 python get_grames_from_video.py -o -d "./3d_video_frames" --emotions happy,sad --actors 8 --kernel rbf --lengthscale 10 --inducing_inputs 20
 ```
+
+## Running the plug-in
+Download the 3D model Louise from [here](https://www.eisko.com/louise/virtual-model#download-louise) and open the scene *Eisko_Head_Rig_Datapack_VFX\Maya_Scene\Louise_Rig_VFX*. Upload the ChangeExpression.mll file into Autodesk Maya using the Plug-in Manager. In the Script Editor, type in:
+
+```bash
+changeExpression
+```
+
+to run the command which will turn the woman's expression into a happy one.
+
+## Running the Emotion Detection Neural Network
+To train the neural network, simply run:
+
+```bash
+python emotion_detection_cnn.py
+```
+
+which will create its own training data from the low-dimensional representations of the video frames (located in the low_dim_frames, which should have been created when training the MRD model, if not you can create it by executing the *get_low_dimension_frames.py* script)
