@@ -22,15 +22,15 @@ class SFE_MRD:
             self.model = pickle.load(open(self.model_path, "rb"))
             self.model.plot_scales()
             plt.show()
-            self.getDiffInY(0)
+            # self.getDiffInY(0) # Used for outputting offset values to use in Maya
             self.plot_latent()
-            self.outputAltered(0)
+            # self.outputAltered(0) # Used for generating test data for the CNN
             self.visualize(2)
         else: # In this case begin training, and plot the results after that
             self.optimize(views, save_model=save_model)
             self.model.plot_scales()
             plt.show()
-            self.getDiffInY(1)
+            self.getDiffInY(0)
             self.plot_latent()
             self.visualize(2)
 
@@ -76,7 +76,7 @@ class SFE_MRD:
         # Define another matrix with all zeros except for the vip dimension
         to_add_emotion = np.zeros(self.model.X.mean.shape)
         # Add onto that dimension in order to alter the latent space mean
-        to_add_emotion[:, vip_dim] += 1.5
+        to_add_emotion[:, vip_dim] += 0.6
 
         # Generate a modified expression with the new mean
         happyX = self.model.X.mean + to_add_emotion
@@ -195,3 +195,4 @@ class SFE_MRD:
             
             plt.savefig("./" + new_dir + "/" + str(i) + ".png")
             plt.clf()
+            plt.close(fig)
